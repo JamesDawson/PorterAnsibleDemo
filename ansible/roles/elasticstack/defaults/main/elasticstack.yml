@@ -1,0 +1,59 @@
+---
+es_cluster: eslocal
+# es_cluster_url: <must-be-specified-via-inventory>
+single_node_cluster: true
+minimum_master_nodes: 1
+master: true
+data: true
+http_enabled: true
+security_enabled: true
+monitoring_enabled: true
+elasticsearch_data_dir: /var/lib/elasticsearch
+elasticsearch_logs_dir: /var/log/elasticsearch
+elasticsearch_memory_lock: true
+es_heap_size: "{{ (ansible_memtotal_mb / 2000) | int }}g"
+
+update_xpack_secure_key: true
+manage_users: true
+es_api_basic_auth_username: elastic
+# es_api_basic_auth_password: <must-be-specified-via-extra-vars>
+
+generate_cert: true
+es_ssl_base_path: "{{ elasticsearch_data_dir }}"
+es_ssl_cert_path: "{{ es_ssl_base_path }}/localhost.crt"
+es_ssl_key_path: "{{ es_ssl_base_path }}/localhost.key"
+es_ssl_csr_path: "{{ es_ssl_base_path }}/localhost.csr"
+es_ssl_p12_cert_path: "{{ es_ssl_base_path }}/elasticsearch-certs.p12"
+es_ssl_key_passphrase: ansible
+es_ssl_verification_mode: none
+
+es_plugins_reinstall: false
+es_plugins:
+  - plugin: repository-azure
+
+# When true Elasticsearch will be restarted during a normal configuration run (if necessary) causing a cluster outage
+enable_unsafe_restarts: false
+# When true, the rolling restart process that keeps the cluster in a yellow/green state is available (but must be called via the rolling-start playbook)
+force_rolling_restart: false
+
+is_docker: false
+is_azure: false
+
+required_vars:
+  - es_cluster
+  - es_cluster_url
+  - single_node_cluster
+  - master
+  - data
+  - http_enabled
+  - security_enabled
+  - monitoring_enabled
+  - elasticsearch_data_dir
+  - elasticsearch_logs_dir
+  - es_ssl_cert_path
+  - es_ssl_key_path
+  - es_ssl_key_passphrase
+  - es_api_basic_auth_username
+  - es_api_basic_auth_password
+  - es_license
+

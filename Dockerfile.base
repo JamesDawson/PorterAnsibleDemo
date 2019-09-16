@@ -1,0 +1,44 @@
+FROM alpine:3.10
+
+RUN apk update \
+    && apk upgrade \
+    && apk add --no-cache \
+        bash \
+        curl \
+        git \
+        gnupg \
+        jq \
+        openssh \
+        openssl \
+        py3-pip \
+        tree \
+        wget \
+        which \
+    && pip3 install --no-cache-dir --upgrade \
+        pip \
+        setuptools \
+    && if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi \
+    && if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi
+
+# Install required Python environment
+ARG ansible_ver=2.8.5
+ARG azcli_ver=2.0.66
+RUN apk add --no-cache --virtual=.build-deps \
+        build-base \
+        gcc \
+        libffi-dev \
+        linux-headers \
+        musl-dev \
+        openssl-dev \
+        python3-dev \
+        ruby-dev \
+    && pip install --no-cache-dir \
+        ansible[azure]==${ansible_ver} \
+        cryptography \
+        docker \
+        molecule \
+        openshift \
+        pyOpenSSL \
+        testinfra==3.0.5 \
+    && pip install --no-cache-dir --upgrade azure-cli==${azcli_ver}
+    #&& apk del .build-deps
