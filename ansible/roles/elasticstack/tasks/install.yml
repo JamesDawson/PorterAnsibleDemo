@@ -1,11 +1,24 @@
 ---
 # file: roles/elasticsearch/tasks/install.yml
 
-- name: Prepare ES apt repo
-  shell: |
-    wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
-    add-apt-repository "deb https://artifacts.elastic.co/packages/7.x/apt stable main"
-    apt-get update
+- name: Add Elasticsearch apt-key
+  apt_key: 
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+  become: true
+
+- name: Add Elasticsearch apt repository
+  apt_repository: 
+    repo: 'deb https://artifacts.elastic.co/packages/7.x/apt stable main' 
+    state: present 
+    update_cache: yes
+  become: true
+
+# - name: Prepare ES apt repo
+#   shell: |
+#     wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+#     add-apt-repository "deb https://artifacts.elastic.co/packages/7.x/apt stable main"
+#     apt-get update
 
 - name: Install required packages
   apt:

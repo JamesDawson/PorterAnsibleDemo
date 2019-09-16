@@ -40,5 +40,5 @@ RUN apk add --no-cache --virtual=.build-deps \
         openshift \
         pyOpenSSL \
         testinfra==3.0.5 \
-    && pip install --no-cache-dir --upgrade azure-cli==${azcli_ver}
-    #&& apk del .build-deps
+    && pip install --no-cache-dir --upgrade azure-cli==${azcli_ver} \
+    && apk del .build-deps

@@ -1,5 +1,6 @@
-# This Porter configuration uses limited CNAB parameters and instead relies on
-# an existing Ansible inventory for configuration management
+# This Porter configuration aims to abstract all required Ansible configuration into
+# CNAB parameters and thus avoid the need for defining an Ansible inventory for a given
+# installation
 
 name: ElasticstackAzure
 version: 0.1.0
@@ -27,9 +28,17 @@ credentials:
     env: AZURE_TENANT
 
 parameters:
-  # this value relates to an Ansible 'environment'
-  - name: environment_name
+  - name: cluster_name
     type: string
+    default: my_es_cluster
+  - name: azure_location
+    type: string
+    default: West Europe
+  - name: ip_address_whitelist
+    type: string
+    default: "0.0.0.0/0"
+  # - name: ssh_public_key
+  #   type: string
 
 install:
   - exec:
@@ -43,10 +52,14 @@ install:
       arguments:
         - ansible/install.yml
       flags:
-        i: ansible/environments/{{ bundle.parameters.environment_name }}
+        e:
+          - es_cluster={{ bundle.parameters.cluster_name }}
+          - azure_location={{ bundle.parameters.azure_location }}
+          - source_ip_whitelist={{ bundle.parameters.ip_address_whitelist }}
+          # TODO: Fix quoting to send in parameter value containing spaces
+          # - admin_public_key="{{ bundle.parameters.ssh_public_key }}"
         # uncomment for more logging
-        # v:
-
+        # v:          
 
 upgrade:
   - exec:
@@ -60,11 +73,12 @@ upgrade:
       arguments:
         - ansible/install.yml
       flags:
-        i: ansible/environments/{{ bundle.parameters.environment_name }}
         e:
           - skip_provision=true
+          - es_cluster={{ bundle.parameters.cluster_name }}
+          - azure_location={{ bundle.parameters.azure_location }}
         # uncomment for more logging
-        # v:          
+        # v:
 
 uninstall:
   - exec:
@@ -73,6 +87,7 @@ uninstall:
       arguments:
         - ansible/uninstall.yml
       flags:
-        i: ansible/environments/{{ bundle.parameters.environment_name }}
+        e:
+          - es_cluster={{ bundle.parameters.cluster_name }}
         # uncomment for more logging
-        # v:
+        # v:          

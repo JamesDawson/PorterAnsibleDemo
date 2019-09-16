@@ -1,7 +1,8 @@
 param
 (
-    [parameter(mandatory=$true)]
-    [string] $environmentName,
+    [ValidateNotNullOrEmpty()]
+    [ValidateScript({Test-Path ansible/environments/$_})]
+    [string] $environmentName = "example",
 
     [ValidateNotNullOrEmpty()]
     [ValidateScript({Test-Path $_})]
@@ -25,10 +26,11 @@ Push-Location $here
 if (!$skipBuild)
 {
     # ensure the base image is built
-    docker build -t cnab-ansible-base -f Dockerfile.base .
+    docker build -q -t cnab-ansible-base -f Dockerfile.base .
     # build the bundle
     porter build
 }
 
+Write-Host "******`n* Target Environment: $environmentName`n******" -ForegroundColor Green
 porter $action --param environment_name=$environmentName --cred $credentialFile
 Pop-Location

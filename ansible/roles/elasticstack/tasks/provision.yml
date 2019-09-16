@@ -1,7 +1,8 @@
 ---
-# file: provision.yml
+# file: roles/elasticsearch/tasks/provision.yml
 
-- command: |
+- name: Azure-CLI login
+  command: |
     az login --service-principal -u {{ lookup('env', 'AZURE_CLIENT_ID') }} --tenant {{ lookup('env', 'AZURE_TENANT') }} -p {{ lookup('env', 'AZURE_SECRET') }}
     
 - name: Create resource group
@@ -86,36 +87,8 @@
         frontend_port_range_start: 22001
         frontend_port_range_end: "{{ 22000 + (vmss_node_count * 2) }}"
         backend_port: 22
-    #inbound_nat_rules: []
-    #   - name: inbound-ssh
-    #     backend_port: 22
-    #     protocol: Tcp
-    #     frontend_port: 22000
-    #     frontend_ip_configuration: "{{ vmss_name }}-lb-frontend"
 
-# - name: Create VMSS
-#   azure_rm_virtualmachinescaleset:
-#     resource_group: "{{ resource_group_name }}"
-#     name: "{{ vmss_name }}"
-#     vm_size: "{{ vmss_node_size }}"
-#     capacity: "{{ vmss_node_count }}"
-#     virtual_network_name: "{{ vnet_name }}"
-#     subnet_name: "{{ subnet_name }}"
-#     admin_username: "{{ admin_username }}"
-#     ssh_password_enabled: false
-#     ssh_public_keys:
-#       - path: /home/{{ admin_username }}/.ssh/authorized_keys
-#         key_data: "{{ admin_public_key }}"
-#     managed_disk_type: Standard_LRS
-#     image: "{{ vm_image_info }}"
-#     upgrade_policy: Automatic
-#     load_balancer: "{{ lb_name }}"
-#     # data_disks:
-#     #   - lun: 0
-#     #     disk_size_gb: 64
-#     #     caching: ReadWrite
-#     #     managed_disk_type: Standard_LRS
-
+# Use ARM template as Ansible VMSS module doesn't seem to support assigning public IPs
 - name: Deploy VMSS ARM template
   azure_rm_deployment:
     state: present
