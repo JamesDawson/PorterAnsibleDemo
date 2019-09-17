@@ -6,7 +6,7 @@ param
 
     [ValidateNotNullOrEmpty()]
     [ValidateScript({Test-Path $_})]
-    [string] $credentialFile = "./porter-dev-creds.yml",
+    [string] $credentialFile = "$(Split-Path -Parent $PSCommandPath)/porter-dev-creds.yml",
 
     [ValidateSet("install","upgrade","uninstall", ignorecase=$true)]
     [string] $action = "install",
@@ -26,11 +26,14 @@ Push-Location $here
 if (!$skipBuild)
 {
     # ensure the base image is built
-    docker build -q -t cnab-ansible-base -f Dockerfile.base .
+    docker build -t cnab-ansible-base -f Dockerfile.base .
     # build the bundle
     porter build
 }
 
-Write-Host "******`n* Target Environment: $environmentName`n******" -ForegroundColor Green
+Write-Host "***************" -ForegroundColor Green
+Write-Host "** Target Env: $environmentName" -ForegroundColor Green
+Write-Host "** Credential: $credentialFile" -ForegroundColor Green
+Write-Host "***************" -ForegroundColor Green
 porter $action --param environment_name=$environmentName --cred $credentialFile
 Pop-Location

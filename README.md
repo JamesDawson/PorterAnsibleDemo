@@ -28,7 +28,7 @@ Before running the script below, you must set the following environment variable
 
 Running the `porter-test.ps1` script from a PowerShell or PowerShell Core prompt will:
 
-1. Build the invocation base image (i.e. all the Ansible-related pre-reqs)
+1. Build the invocation base image with all the Ansible pre-reqs (this will take a few minutes the first time)
 1. Use Porter to build the CNAB bundle
 1. Use Porter to invoke the CNAB bundle passing parameters to Ansible
 1. Ansible will use the specified environment as its 'inventory' (for configuration purposes)

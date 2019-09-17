@@ -13,12 +13,9 @@
     state: present 
     update_cache: yes
   become: true
-
-# - name: Prepare ES apt repo
-#   shell: |
-#     wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
-#     add-apt-repository "deb https://artifacts.elastic.co/packages/7.x/apt stable main"
-#     apt-get update
+  # add retry in case apt is already locked due to initial VM provisioning tasks
+  retries: 12
+  delay: 10
 
 - name: Install required packages
   apt:

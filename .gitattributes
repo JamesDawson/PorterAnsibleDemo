@@ -1,0 +1,3 @@
+# Keep Unix-style LF for shell scripts and SSH key files
+*.sh text eol=lf
+ansible/enmvironments/*_id text eol=lf
