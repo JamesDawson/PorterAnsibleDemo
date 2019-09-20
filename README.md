@@ -70,6 +70,10 @@ The bundle concept offers convenience for:
 * using only CNAB parameters would be more important for the more turn-key scenarios, where it is important to hide the underlying automation 
 * initially I felt that credential handling was a bit clunky, but on reflection I think it's on par with other tools - it will be interesting to see whether the CNAB/Porter tooling expands to support secret stores (e.g. Azure KeyVault, Hashicorp Vault etc.)
 
+# Gotchas
+
+* Porter tracks installed bundles (look in `~/.porter/claims`) and as it tracks by bundle name it can't understand that a bundle installed with a different parameter is actually a different instance (as in this usage). Installing to two different environments worked fine, however, once I ran the uninstall against one environment Porter would not start an uninstall for the other as it didn't think the bundle was installed. Initially it was somewhat confusing as there isn't any message to explain why nothing is happening, so of course I assumed I'd messed-up something, however I eventually realised what was happening before completely losing my sanity.  One of the potential future experiments listed below aims to workaround this.
+
 # Conclusions
 
 I can see this tooling offering benefits whether you're delivering a shrink-wrapped cloud product that needs a simple way of enabling users/customers to install it, or if you're building cloud solutions internally.  Also, as long as your underlying automation supports it, you could have a single bundle that enabled deployment of your product to multiple cloud platforms (e.g. Azure and AWS).
@@ -80,3 +84,4 @@ The Porter tooling offers functionality that you would otherwise have to write y
 
 * Investigate using Ansible to codegen the `porter.yaml` file (e.g. to automate parameter authoring)
 * Enable passing arbitrary Ansible arguments through the `porter install` command (i.e. to provide greater adhoc control)
+* Bundling the automation and configuration seperately (i.e. a configuration bundle per enviroment for this use case), then use Porter's [bundle dependencies feature](https://porter.sh/dependencies/) to re-combine them at deployment time
