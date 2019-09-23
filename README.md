@@ -33,6 +33,28 @@ Running the `porter-test.ps1` script from a PowerShell or PowerShell Core prompt
 1. Use Porter to invoke the CNAB bundle passing parameters to Ansible
 1. Ansible will use the specified environment as its 'inventory' (for configuration purposes)
 
+## Bundle-Per-Env Example
+
+To run this example you should have an Azure Container Registry (ACR) available, and be logged in to the Azure-Cli. Run the example build process to generate the CNAB bundles for each environment (in this case two environments, 'example' & 'readsource'):
+```
+./build.ps1 -version 0.1.0 -registry myacr
+```
+
+You should now be able to see the following repositories in your ACR, inside which will be the versioned items:
+```
+elasticstack-example
+elasticstack-example-bundle
+elasticstack-readsource
+elasticstack-readsource-bundle
+```
+
+The `-bundle` repositories contain the CNAB bundle manifests, while the others contain the invocation image that will perform the bundle install, upgrade or uninstall.
+
+To install one of these bundles, you give Porter a reference to the bundle artefact:
+```
+porter install -t myacr.azurecr.io/elasticstack-example-bundle:0.1.0 --cred ./porter-dev-creds.yaml
+```
+
 ## Examples
 
 Run an installation using the default `example` environment and default `porter-dev-creds.yaml` credentials:
