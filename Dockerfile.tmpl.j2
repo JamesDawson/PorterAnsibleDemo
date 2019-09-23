@@ -1,0 +1,18 @@
+###
+### This file was generated from a template - manual changes may be lost!
+###
+
+FROM quay.io/deis/lightweight-docker-go:v0.2.0
+
+FROM eeacms/rsync AS code
+COPY ansible /all-files
+RUN mkdir /code \
+    && rsync -r --exclude=environments /all-files/ /code/
+
+FROM cnab-ansible-base
+COPY --from=0 /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+
+ARG BUNDLE_DIR
+COPY --from=code /code $BUNDLE_DIR/ansible
+
+COPY ansible/environments/{{ item }} $BUNDLE_DIR/ansible/environment

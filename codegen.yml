@@ -1,0 +1,35 @@
+---
+- hosts: localhost
+  gather_facts: no
+  connection: localhost
+
+  vars:
+    bundle_version: 0.0.0-local
+    registry: readsourceacr.azurecr.io
+
+  tasks:
+    - find:
+        path: "{{ playbook_dir }}/ansible/environments"
+        patterns: "*"
+        file_type: directory
+      register: files
+    
+    - set_fact:
+        env_dirs: "{{ files.files | map(attribute='path') | map('basename') | list }}"
+    
+    - debug:
+        msg: "{{ item }}"
+      loop: "{{ env_dirs }}"
+    
+    - template:
+        src: "{{ playbook_dir }}/Dockerfile.tmpl.j2"
+        dest: "{{ playbook_dir }}/Dockerfile-{{ item }}.tmpl"
+      loop: "{{ env_dirs }}"
+    
+    - debug:
+        var: bundle_version
+
+    - template:
+        src: "{{ playbook_dir }}/porter.yaml.j2"
+        dest: "{{ playbook_dir }}/porter-{{ item }}-codegen.yaml"
+      loop: "{{ env_dirs }}"

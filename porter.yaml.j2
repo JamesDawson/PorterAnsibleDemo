@@ -1,12 +1,16 @@
+###
+### This file was generated from a template - manual changes may be lost!
+###
+
 # This Porter configuration uses limited CNAB parameters and instead relies on
 # an existing Ansible inventory for configuration management
 
-name: ElasticstackAzure
-version: 0.1.0
-description: "An Elasticstack Porter configuration"
-invocationImage: elasticstack-azure:latest
-tag: elasticstack-azure-bundle:latest
-dockerfile: Dockerfile.tmpl
+name: ElasticstackAzure-{{ item }}
+version: {{ bundle_version }}
+description: "An Elasticstack Porter configuration (environment: {{ item }})"
+invocationImage: {{ registry }}/elasticstackazure-{{ item }}:{{ bundle_version }}
+tag: {{ registry }}/elasticstackazure-{{ item }}-bundle:{{ bundle_version }}
+dockerfile: Dockerfile-{{ item }}.tmpl
 
 mixins:
   - exec
@@ -26,10 +30,7 @@ credentials:
   - name: azure_tenant
     env: AZURE_TENANT
 
-parameters:
-  # this value relates to an Ansible 'environment'
-  - name: environment_name
-    type: string
+parameters: []
 
 install:
   - exec:
@@ -43,7 +44,7 @@ install:
       arguments:
         - ansible/install.yml
       flags:
-        i: ansible/environments/{{ bundle.parameters.environment_name }}
+        i: ansible/environment
         # uncomment for more logging
         # v:
 
@@ -60,7 +61,7 @@ upgrade:
       arguments:
         - ansible/install.yml
       flags:
-        i: ansible/environments/{{ bundle.parameters.environment_name }}
+        i: ansible/environment
         e:
           - skip_provision=true
         # uncomment for more logging
@@ -73,6 +74,6 @@ uninstall:
       arguments:
         - ansible/uninstall.yml
       flags:
-        i: ansible/environments/{{ bundle.parameters.environment_name }}
+        i: ansible/environment
         # uncomment for more logging
         # v:
