@@ -84,4 +84,4 @@ The Porter tooling offers functionality that you would otherwise have to write y
 
 * Investigate using Ansible to codegen the `porter.yaml` file (e.g. to automate parameter authoring)
 * Enable passing arbitrary Ansible arguments through the `porter install` command (i.e. to provide greater adhoc control)
-* Bundling the automation and configuration seperately (i.e. a configuration bundle per enviroment for this use case), then use Porter's [bundle dependencies feature](https://porter.sh/dependencies/) to re-combine them at deployment time
+* Bundling the automation and configuration seperately (i.e. a configuration bundle per enviroment for this use case), ~~then use Porter's [bundle dependencies feature](https://porter.sh/dependencies/) to re-combine them at deployment time~~ (**UPDATE**: See the [bundle-per-env](https://github.com/JamesDawson/PorterAnsibleDemo/tree/bundle-per-env) branch for a possible solution to this)
